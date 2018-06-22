@@ -1,0 +1,4 @@
+pyhash
+pytest
+pytest-mock
+pytest-benchmark
