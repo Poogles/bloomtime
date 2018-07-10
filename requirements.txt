@@ -1,4 +1,1 @@
-pyhash
-pytest
-pytest-mock
-pytest-benchmark
+fnvhash

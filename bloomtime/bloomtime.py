@@ -6,7 +6,7 @@ import logging
 import math
 import time
 
-import pyhash
+from fnvhash import fnv1a_32
 
 
 LOG = logging.getLogger('bloomtime')
@@ -34,8 +34,6 @@ class BloomTime:
             raise ValueError('Capacity must be greater than one.')
         self.capacity = capacity
         self.error_rate = error_rate
-        # Setup a default fnv hash class.
-        self._hash = pyhash.fnv1_32()
         # TODO: Calculate hashes and array dynamically based upon a best guess.
         # This hashes number always need to be an odd number due to the way
         # we summarise the TTLs by chosing to glob together on the modal TTL.
@@ -70,7 +68,7 @@ class BloomTime:
 
         # Insert the key based upon the total number of hashes.
         for i in range(self.hashes):
-            bucket = self._hash(key, str(i)) % self.capacity
+            bucket = fnv1a_32(key, str(i)) % self.capacity
             self._container[bucket] = expire_time
 
         LOG.debug('All hashes set.')
@@ -90,7 +88,7 @@ class BloomTime:
 
         # Fetch all hashes for the given key.
         for i in range(self.hashes):
-            bucket = self._hash(key, str(i)) % self.capacity
+            bucket = fnv1a_32(key, str(i)) % self.capacity
             result = self._container[bucket]
             results.append(result)
 

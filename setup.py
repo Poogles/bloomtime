@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='bloomtime',
-      version='0.1.1',
+      version='0.2.0',
       description='Bloom filter with optional TTL',
       url='https://github.com/Poogles/bloomtime',
       author='Sam Pegler',
