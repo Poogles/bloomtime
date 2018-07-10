@@ -1,4 +1,4 @@
-# Bloomtime
+# Bloomtime  [![Build Status](https://travis-ci.org/Poogles/bloomtime.svg?branch=master)](https://travis-ci.org/Poogles/bloomtime)
 
 A bloom filter where optional TTLs can be set for expiry.
 
