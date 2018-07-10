@@ -16,15 +16,15 @@ def test_set(bloomtime_fixture, caplog):
 
     bloomtime_fixture.set('foo')
     # We know the hashes for foo on a 1000 item container
-    assert bloomtime_fixture._container[866] > 1
-    assert bloomtime_fixture._container[485] > 1
-    assert bloomtime_fixture._container[628] > 1
-    assert bloomtime_fixture._container[247] > 1
-    assert bloomtime_fixture._container[390] > 1
-    assert bloomtime_fixture._container[9] > 1
-    assert bloomtime_fixture._container[152] > 1
-    assert bloomtime_fixture._container[771] > 1
-    assert bloomtime_fixture._container[914] > 1
+    assert bloomtime_fixture._container[885] > 1
+    assert bloomtime_fixture._container[266] > 1
+    assert bloomtime_fixture._container[647] > 1
+    assert bloomtime_fixture._container[28] > 1
+    assert bloomtime_fixture._container[409] > 1
+    assert bloomtime_fixture._container[790] > 1
+    assert bloomtime_fixture._container[171] > 1
+    assert bloomtime_fixture._container[552] > 1
+    assert bloomtime_fixture._container[837] > 1
 
 
 def test_ttl_set(bloomtime_fixture, mocker, caplog):

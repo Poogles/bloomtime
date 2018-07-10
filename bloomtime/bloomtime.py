@@ -68,7 +68,8 @@ class BloomTime:
 
         # Insert the key based upon the total number of hashes.
         for i in range(self.hashes):
-            bucket = fnv1a_32(key, str(i)) % self.capacity
+            bucket = fnv1a_32((str(key) + str(i)).encode()) % self.capacity
+            LOG.debug('Setting bucket %s with %s.', bucket, ttl)
             self._container[bucket] = expire_time
 
         LOG.debug('All hashes set.')
@@ -88,7 +89,7 @@ class BloomTime:
 
         # Fetch all hashes for the given key.
         for i in range(self.hashes):
-            bucket = fnv1a_32(key, str(i)) % self.capacity
+            bucket = fnv1a_32((str(key) + str(i)).encode()) % self.capacity
             result = self._container[bucket]
             results.append(result)
 
