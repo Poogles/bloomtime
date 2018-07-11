@@ -30,14 +30,14 @@ class BloomTime:
             raise ValueError('Error rate must be less than 0.01.')
         if capacity < 1:
             raise ValueError('Capacity must be greater than one.')
-        self.capacity = capacity
+        self._capacity = capacity
         self.error_rate = error_rate
         # TODO: Calculate hashes and array dynamically based upon a best guess.
         # This hashes number always need to be an odd number due to the way
         # we summarise the TTLs by chosing to glob together on the modal TTL.
         self.hashes = 9
         self.array_size = (
-            math.ceil((self.capacity * math.log(self.error_rate)) / math.log(
+            math.ceil((self._capacity * math.log(self.error_rate)) / math.log(
                 1 / pow(2, math.log(2)))))
 
         log.debug('Initialising an array of %s size.', self.array_size)
@@ -66,7 +66,7 @@ class BloomTime:
 
         # Insert the key based upon the total number of hashes.
         for i in range(self.hashes):
-            bucket = hash(str(key) + str(i)) % self.capacity
+            bucket = hash(str(key) + str(i)) % self.array_size
             log.debug('Setting bucket %s with %s.', bucket, ttl)
             self._container[bucket] = expire_time
 
@@ -87,7 +87,7 @@ class BloomTime:
 
         # Fetch all hashes for the given key.
         for i in range(self.hashes):
-            bucket = hash(str(key) + str(i)) % self.capacity
+            bucket = hash(str(key) + str(i)) % self.array_size
             result = self._container[bucket]
             log.debug('Reading bucket %s as %s.', bucket, result)
             results.append(result)
