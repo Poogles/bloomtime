@@ -15,16 +15,12 @@ def test_set(bloomtime_fixture, caplog):
     caplog.set_level(logging.DEBUG)
 
     bloomtime_fixture.set('foo')
-    # We know the hashes for foo on a 1000 item container
-    assert bloomtime_fixture._container[885] > 1
-    assert bloomtime_fixture._container[266] > 1
-    assert bloomtime_fixture._container[647] > 1
-    assert bloomtime_fixture._container[28] > 1
-    assert bloomtime_fixture._container[409] > 1
-    assert bloomtime_fixture._container[790] > 1
-    assert bloomtime_fixture._container[171] > 1
-    assert bloomtime_fixture._container[552] > 1
-    assert bloomtime_fixture._container[837] > 1
+    # We know 9 hashes should be set.
+    total = 0
+    for i in bloomtime_fixture._container:
+        if i > 0:
+            total += 1
+    assert total == 9
 
 
 def test_ttl_set(bloomtime_fixture, mocker, caplog):
@@ -41,6 +37,25 @@ def test_ttl_set(bloomtime_fixture, mocker, caplog):
 
     # TTL has now expired, check it's False.
     assert bloomtime_fixture.get('foo') is False
+
+
+def test_common_result(bloomtime_fixture, mocker, caplog):
+    caplog.set_level(logging.DEBUG)
+    # Set foo to be in the filter.
+    bloomtime_fixture.set('foo', ttl=400)
+    # simulate a couple of hash collisions by altering some buckets.
+    # because we're using the builtin hash we need to do this in this process
+    # rather than just hard coding some values.
+    collisions = 0
+    for pos, i in enumerate(bloomtime_fixture._container):
+        if i > 0:
+            bloomtime_fixture._container[pos] = 987
+            collisions += 1
+        # We only want a couple of collisions.
+        if collisions == 2:
+            break
+
+    assert bloomtime_fixture.get('foo') is True
 
 
 def test_contains_methods(bloomtime_fixture):

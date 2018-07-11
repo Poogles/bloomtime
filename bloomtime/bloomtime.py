@@ -6,10 +6,8 @@ import logging
 import math
 import time
 
-from fnvhash import fnv1a_32
 
-
-LOG = logging.getLogger('bloomtime')
+log = logging.getLogger('bloomtime')
 
 # This is mostly lifted from this lovely guide and the calculator here...
 # https://bugra.github.io/work/notes/2016-06-05/a-gentle-introduction-to-bloom-filter/
@@ -42,7 +40,7 @@ class BloomTime:
             math.ceil((self.capacity * math.log(self.error_rate)) / math.log(
                 1 / pow(2, math.log(2)))))
 
-        LOG.debug('Initialising an array of %s size.', self.array_size)
+        log.debug('Initialising an array of %s size.', self.array_size)
         # Initialise an empty Array of unssigned ints.
         # They're intialised empty with 0s as the initial char.
         self._container = array.array('I', [0 for x in range(self.array_size)])
@@ -68,11 +66,11 @@ class BloomTime:
 
         # Insert the key based upon the total number of hashes.
         for i in range(self.hashes):
-            bucket = fnv1a_32((str(key) + str(i)).encode()) % self.capacity
-            LOG.debug('Setting bucket %s with %s.', bucket, ttl)
+            bucket = hash(str(key) + str(i)) % self.capacity
+            log.debug('Setting bucket %s with %s.', bucket, ttl)
             self._container[bucket] = expire_time
 
-        LOG.debug('All hashes set.')
+        log.debug('All hashes set.')
 
     def get(self, key: str) -> bool:
         """Check if a key is present in the bloom filter.
@@ -89,8 +87,9 @@ class BloomTime:
 
         # Fetch all hashes for the given key.
         for i in range(self.hashes):
-            bucket = fnv1a_32((str(key) + str(i)).encode()) % self.capacity
+            bucket = hash(str(key) + str(i)) % self.capacity
             result = self._container[bucket]
+            log.debug('Reading bucket %s as %s.', bucket, result)
             results.append(result)
 
         # Due to us abusing how bloom filters work, we need to find the
